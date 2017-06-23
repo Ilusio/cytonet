@@ -99,3 +99,10 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# other files
+*.png
+*.hdf5
+*.json
+data
+*.jpg
