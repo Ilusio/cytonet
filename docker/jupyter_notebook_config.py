@@ -20,9 +20,4 @@ c.NotebookApp.port = 8888
 c.NotebookApp.open_browser = False
 c.MultiKernelManager.default_kernel_name = 'python2'
 c.NotebookApp.notebook_dir='/root/workspace/'
-c.NotebookApp.password='G70m3ru7u$!'
-
-# sets a password if PASSWORD is set in the environment
-if 'PASSWORD' in os.environ:
-    c.NotebookApp.password = passwd(os.environ['PASSWORD'])
-    del os.environ['PASSWORD']
+c.NotebookApp.password=passwd('G70m3ru7u$!')
