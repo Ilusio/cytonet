@@ -790,7 +790,9 @@ class NumpyArrayIterator(Iterator):
         batch_x_shape = [current_batch_size] + list(self.x.shape)[1:]
         batch_x_shape = tuple(batch_x_shape)
         batch_x = np.zeros(batch_x_shape, dtype=K.floatx())
-        batch_y = np.zeros(tuple([current_batch_size] + list(self.x.shape)[1:]), dtype=K.floatx())
+        #batch_y = np.zeros(tuple([current_batch_size] + list(self.x.shape)[1:]), dtype=K.floatx())
+        #print("\n###\n", batch_x_shape[0], "\n###\n")
+        batch_y = np.zeros((batch_x_shape[0],64,64,2), dtype=K.floatx())
         for i, j in enumerate(index_array):
             x = self.x[j]
             y = self.y[j]
