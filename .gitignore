@@ -106,3 +106,4 @@ ENV/
 *.json
 data
 *.jpg
+*.cfg
