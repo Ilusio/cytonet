@@ -1,0 +1,22 @@
+ipykernel 
+Cython 
+jupyter 
+scikit-learn 
+openslide-python 
+path.py 
+Pillow 
+pygments 
+six 
+sphinx 
+wheel 
+zmq 
+jupyterthemes 
+h5py 
+jupyter_contrib_nbextensions 
+scikit-image 
+pydot 
+graphviz 
+opencv-python
+tensorflow
+keras
+-e git+git://github.com/Theano/Theano.git#egg=Theano
