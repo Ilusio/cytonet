@@ -15,12 +15,13 @@ from skimage import color
 from skimage import io
 import time
 
-def initValues(files,max_classes, img_classes, level, maskPattern, classes):
+def initValues(files, level, maskPattern, classes):
     extracting = {} # classes with connected components
     none_extracting = {} # the number of patches of this class depends on the previous dictionnary
     max_extraction = 0 # the number of patches for the none classes
     n_files = len(files)
-    for key, val in img_classes.items():
+    for key, tup in classes.items():
+        val = tup[1]
         if(val==None):
             none_extracting[key]=0
         elif(val<=0):
@@ -40,17 +41,18 @@ def initValues(files,max_classes, img_classes, level, maskPattern, classes):
             del im
             # find the number of connected components
             for key, val in extracting.items():
-                nb_patches = (0 - img_classes[key]) + 1 # number of shifts
+                nb_patches = (0 - classes[key][1]) + 1 # number of shifts
                 # find connected components
                 maskClass = np.array(maskArray)
-                np.putmask(maskClass,maskClass!=classes[key],0)
+                np.putmask(maskClass,maskClass!=classes[key][0],0)
                 maskClass = measure.label(maskClass)
                 nb_extract = maskClass.max()
-                # take max images or the number of connected components
+                # take max images or the number of connected components               
                 try:
-                    if(max_classes[key]<maskClass.max()):
-                        print("Found ", maskClass.max(), " components for ", key, " but max number is ", max_classes[key])
-                        nb_extract = max_classes[key]
+                    max_class=classes[key][2]
+                    if(max_class<maskClass.max()):
+                        print("Found ", maskClass.max(), " components for ", key, " but max number is ", max_class)
+                        nb_extract = max_class
                 except:
                     pass
                 extracting[key] += nb_extract * nb_patches
@@ -61,9 +63,10 @@ def initValues(files,max_classes, img_classes, level, maskPattern, classes):
                 max_extraction=val
     # initialize the arrays for none classes
     for key, val in none_extracting.items():
-        img_classes[key]=3*int(max_extraction/n_files)
-        print("Number of extraction per file for ", key, " is ", img_classes[key])
-        
+        classes[key]=(classes[key][0],int(int(max_extraction/n_files)*classes[key][2]),classes[key][2])
+        print("Number of extraction per file for ", key, " is ", classes[key][1])
+    return classes
+
 def addBackground(imArray, maskArray):
     """
         Find the background on the array and put the value 2 on the mask
@@ -101,7 +104,7 @@ def addBackground(imArray, maskArray):
     opening = opening.astype(np.uint8)
     return opening
 
-def extractPatches(output,filename,maskname, classes, max_classes, img_classes, level, patchSize,j):
+def extractPatches(output,filename,maskname, classes, level, patchSize,j):
     """
         Extract the patches for the given file and maskname
     """
@@ -122,13 +125,14 @@ def extractPatches(output,filename,maskname, classes, max_classes, img_classes, 
     maskArrayPad = np.lib.pad(maskArray, ((halfPatch, halfPatch), (halfPatch, halfPatch)), 'reflect')
     np.putmask(maskArrayPad, maskArrayPad==1, 255)
     # Extraction
-    for key, val in classes.items():
+    for key, tup in classes.items():
         print("Extracting patches for ", key)
         # classes with the number of patches specified
-        if(img_classes[key]>0):
-            print("Extracting ", img_classes[key], " patches ")
-            indices = np.where(maskArray_back==val)
-            sample = random.sample(range(len(indices[0])), img_classes[key])
+        img_class = tup[1]
+        if(img_class>0):
+            print("Extracting ", img_class, " patches ")
+            indices = np.where(maskArray_back==tup[0])
+            sample = random.sample(range(len(indices[0])), img_class)
             maskClass = np.array(maskArrayPad) #TODO : remove this ?  
             for i in sample:
                 x=indices[0][i]
@@ -149,18 +153,21 @@ def extractPatches(output,filename,maskname, classes, max_classes, img_classes, 
                     print("",j," patches extracted")
         else:
             # classes with connected components
-            nb_patches = (0 - img_classes[key]) + 1
+            nb_patches = (0 - tup[1]) + 1
             maskClass = np.array(maskArray_back)
-            np.putmask(maskClass,maskClass!=val,0)
+            np.putmask(maskClass,maskClass!=tup[0],0)
             maskClass = measure.label(maskClass)
+            bb_labels = measure.regionprops(maskClass)
             nb_extract = maskClass.max()
+            extract_sample = range(len(bb_labels))
             try:
-                if(max_classes[key]<maskClass.max()):
-                    nb_extract = max_classes[key]
+                max_class= tup[2]
+                if(max_class<maskClass.max()):
+                    nb_extract = max_class
+                    extract_sample = random.sample(extract_sample,nb_extract)
             except:
                 pass  
-            bb_labels = measure.regionprops(maskClass)
-            for i in range(len(bb_labels)):
+            for i in extract_sample:
                 bb = bb_labels[i].bbox
                 x_center = int((bb[0]+bb[2]) / 2) + halfPatch
                 y_center = int((bb[1]+bb[3]) / 2) + halfPatch
@@ -208,15 +215,13 @@ def extractFiles(files,
             outputFolder, 
             maskPattern, 
             classes, 
-            max_classes, 
-            img_classes, 
             level, 
             patchSize):
     """
         Extract all the files of a folder
     """
     j = 0
-    initValues(files, max_classes, img_classes, level, maskPattern, classes)
+    new_classes = initValues(files, level, maskPattern, classes)
     for oneFile in files:
         name = os.path.splitext(os.path.basename(oneFile))[0]
         for key, val in classes.items():
@@ -232,9 +237,7 @@ def extractFiles(files,
         j = extractPatches(outputFolder, 
                            oneFile, 
                            maskFile,  
-                           classes, 
-                           max_classes, 
-                           img_classes, 
+                           new_classes,  
                            level, 
                            patchSize,
                            j)
