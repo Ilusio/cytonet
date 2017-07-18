@@ -14,6 +14,7 @@ from skimage import morphology
 from skimage import color
 from skimage import io
 import time
+from util import mkdirs
 
 def initValues(files, level, maskPattern, classes):
     extracting = {} # classes with connected components
@@ -226,12 +227,7 @@ def extractFiles(files,
         name = os.path.splitext(os.path.basename(oneFile))[0]
         for key, val in classes.items():
             folder = os.path.join(outputFolder,key)
-            if not os.path.exists(folder):
-                try:
-                  original_umask = os.umask(0)
-                  os.makedirs(folder,0o777)
-                finally:
-                  os.umask(original_umask)
+            mkdirs(folder,0o777)
         print("Extracting " + name)
         maskFile = glob.glob(os.path.dirname(oneFile)+"/"+name+maskPattern)[0]
         j = extractPatches(outputFolder, 
