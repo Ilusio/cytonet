@@ -1,4 +1,4 @@
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 import numpy as np
 from skimage import measure
 import time
@@ -12,6 +12,7 @@ import ast
 import errno
 import os
 from util import mkdirs, extend_glob, file_suffix
+
 
 def evaluate(prediction, filename, output_folder,load_level, transparency, display):
     FN = 0 # Number of false negatives
@@ -153,6 +154,8 @@ def evaluate(prediction, filename, output_folder,load_level, transparency, displ
 
     # Calculate the Fscore
     Fscore = (2*TP)/(2*TP+FP+FN)
+    recall = (TP)/(TP+FN)
+    precision = (TP)/(TP+FP)
     print("Fscore : ", Fscore)
     print("TP : ", TP)
     print("FP : ", FP)
@@ -164,4 +167,22 @@ def evaluate(prediction, filename, output_folder,load_level, transparency, displ
 
     # Merge the mask and image and save it
     maskImage = Image.fromarray(maskArray, 'RGBA')
-    Image.alpha_composite(imload, maskImage).save(output_image)
+    maskImage = Image.alpha_composite(imload, maskImage)
+    maskImage = maskImage.crop((0,0,maskImage.size[0], maskImage.size[1]+150))
+    
+    # Add caption
+    draw = ImageDraw.Draw(maskImage)
+    draw.rectangle(((0,maskImage.size[1]-150), (maskImage.size[0],maskImage.size[1])), fill=(255,255,255))
+    draw.rectangle(((15, maskImage.size[1]-65), (65, maskImage.size[1]-15)), fill=(255,0,0))
+    draw.rectangle(((maskImage.size[0]/3 +15, maskImage.size[1]-65), (maskImage.size[0]/3 +65, maskImage.size[1]-15)), fill=(0,255,0))
+    draw.rectangle(((maskImage.size[0]*2/3 +15, maskImage.size[1]-65), (maskImage.size[0]*2/3 + 65, maskImage.size[1]-15)), fill=(0,0,255))
+    
+    # Add caption text
+    font = ImageFont.truetype("./font/Roboto-Medium.ttf", 40)
+    draw.text((80, maskImage.size[1]-63),"False positive : " + str(FP),(0,0,0),font=font)
+    draw.text((maskImage.size[0]/3 + 80, maskImage.size[1]-63),"True positive : " + str(TP),(0,0,0),font=font)
+    draw.text((maskImage.size[0]*2/3 + 80, maskImage.size[1]-63),"False positive : " + str(FN),(0,0,0),font=font)
+    draw.text((15, maskImage.size[1]-135),"F-score : " + str(round(Fscore, 5)),(0,0,0),font=font)
+    draw.text((maskImage.size[0]/3 +15, maskImage.size[1]-135),"Recall : " + str(round(recall, 5)),(0,0,0),font=font)
+    draw.text((maskImage.size[0]*2/3 +15, maskImage.size[1]-135),"Precision : " + str(round(precision, 5)),(0,0,0),font=font)
+    maskImage.save(output_image)
