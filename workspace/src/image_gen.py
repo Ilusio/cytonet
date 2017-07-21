@@ -377,6 +377,7 @@ class ImageDataGenerator(object):
     """
 
     def __init__(self,
+                 nb_classes=1,
                  featurewise_center=False,
                  samplewise_center=False,
                  featurewise_std_normalization=False,
@@ -414,7 +415,7 @@ class ImageDataGenerator(object):
         self.vertical_flip = vertical_flip
         self.rescale = rescale
         self.preprocessing_function = preprocessing_function
-
+        self.nb_classes=nb_classes
         if data_format not in {'channels_last', 'channels_first'}:
             raise ValueError('data_format should be "channels_last" (channel after row and '
                              'column) or "channels_first" (channel before row and column). '
@@ -445,7 +446,8 @@ class ImageDataGenerator(object):
     def flow(self, x, y=None, batch_size=32, shuffle=True, seed=None,
              save_to_dir=None, save_prefix='', save_format='jpeg'):
         return NumpyArrayIterator(
-            x, y, self,
+            x, y, self, 
+            nb_classes=self.nb_classes,
             batch_size=batch_size,
             shuffle=shuffle,
             seed=seed,
@@ -738,7 +740,7 @@ class NumpyArrayIterator(Iterator):
             (if `save_to_dir` is set).
     """
 
-    def __init__(self, x, y, image_data_generator,
+    def __init__(self, x, y, image_data_generator, nb_classes=1,
                  batch_size=32, shuffle=False, seed=None,
                  data_format=None,
                  save_to_dir=None, save_prefix='', save_format='jpeg'):
@@ -773,6 +775,7 @@ class NumpyArrayIterator(Iterator):
         self.save_to_dir = save_to_dir
         self.save_prefix = save_prefix
         self.save_format = save_format
+        self.nb_classes = nb_classes
         super(NumpyArrayIterator, self).__init__(x.shape[0], batch_size, shuffle, seed)
 
     def next(self):
@@ -792,7 +795,7 @@ class NumpyArrayIterator(Iterator):
         batch_x = np.zeros(batch_x_shape, dtype=K.floatx())
         #batch_y = np.zeros(tuple([current_batch_size] + list(self.x.shape)[1:]), dtype=K.floatx())
         #print("\n###\n", batch_x_shape[0], "\n###\n")
-        batch_y = np.zeros((batch_x_shape[0],64,64,2), dtype=K.floatx())
+        batch_y = np.zeros((batch_x_shape[0],batch_x_shape[1],batch_x_shape[2],self.nb_classes), dtype=K.floatx())
         for i, j in enumerate(index_array):
             x = self.x[j]
             y = self.y[j]
