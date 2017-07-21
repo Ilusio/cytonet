@@ -161,7 +161,7 @@ def evaluate(prediction, filename, output_folder,load_level, transparency, displ
     print("FP : ", FP)
     print("FN : ", FN)
 
-    filename_base = prediction.split("/")[-1].split(".")[0]
+    filename_base = prediction.split("/")[-1].split(".png")[0]
 
     output_image = os.path.join(output_folder , filename_base + "_" + str(round(Fscore*100,2)) +".png")
 

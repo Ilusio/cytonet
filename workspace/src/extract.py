@@ -119,11 +119,11 @@ def extractPatches(output,filename,maskname, classes, level, patchSize,j):
     imArray = np.array(imload)
     maskArray = np.array(mask)
     halfPatch = patchSize//2
- 
+    
     #Preprocess
     maskArray_back = addBackground(imArray, maskArray)
     imArray = np.lib.pad(imArray, ((halfPatch, halfPatch), (halfPatch, halfPatch),(0,0)), 'reflect')
-    maskArrayPad = np.lib.pad(maskArray, ((halfPatch, halfPatch), (halfPatch, halfPatch)), 'reflect')
+    maskArrayPad = np.lib.pad(maskArray_back, ((halfPatch, halfPatch), (halfPatch, halfPatch)), 'reflect')
     np.putmask(maskArrayPad, maskArrayPad==1, 255)
     # Extraction
     for key, tup in classes.items():
