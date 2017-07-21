@@ -155,7 +155,7 @@ def evaluate(prediction, filename, output_folder,load_level, transparency, displ
     # Calculate the Fscore
     Fscore = (2*TP)/(2*TP+FP+FN)
     recall = (TP)/(TP+FN)
-    precision = (TP)/(TP+FP)
+    precision = 0 if (TP==0 and FP==0) else (TP)/(TP+FP)
     print("Fscore : ", Fscore)
     print("TP : ", TP)
     print("FP : ", FP)
