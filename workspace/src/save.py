@@ -32,7 +32,9 @@ def load_data(classFolders, files_pattern, patchSize):
             img = Image.open(file)
             imgArray = np.array(img).astype(np.float32)
             imgArray = (imgArray - imgArray.min())/(imgArray.max() - imgArray.min())
-            maskArray = np.expand_dims(np.array(mask),-1).astype(np.float32)/255
+            maskArray = np.expand_dims(np.array(mask),-1).astype(np.float32)
+            np.putmask(maskArray,maskArray==128,2)
+            np.putmask(maskArray,maskArray==255,1)
             data[className+'_imgs'][i,:,:,:]=imgArray
             data[className+'_masks'][i,:,:,:]=maskArray
             i+=1

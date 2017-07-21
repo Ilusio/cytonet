@@ -101,7 +101,7 @@ def addBackground(imArray, maskArray):
     for i in values:
         if(i<0 and i>-256):
             np.putmask(opening,opening==i,i+256)
-    np.putmask(opening,opening==-256,2)
+    np.putmask(opening,opening==-256,128)
     opening = opening.astype(np.uint8)
     return opening
 
