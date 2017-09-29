@@ -44,6 +44,7 @@ The configuration file is named cytonet.cfg. Each step of the pipeline has a sec
 - classes : Dictionary of tuples giving the value/number of patches/max patches. For example : {'neg': (0,None,2), 'pos' : (255,0), 'back' : (128,20)}. The first member of the tuple is the value of the pixels on the mask. If the second member is greater than 0, it will extract this number of patches randomly on the image. If it's equal to 0, it will extract one patch per connected component. If it's less than 0, it will extract one patch centered on each component plus -n+1 shiftings on each one (ie if you have 100 components and you choose -1 you will get 200 patches). You can also put None as the second member then you have to add a third parameter. This last parameter will take the maximum number of patches for all the classes and multiply it by the parameter. In the exemple, if you have 500 pos patches, you will get 1000 neg patches.  
 - load_level : Parameter for SVS file. Define the loading level for the image. If not defined, the parameter load_level in the general section is used.
 - patch_size : Size of the patches. If not defined, the parameter patch_size in the general section is used.
+- background : If true, the background will be detected with morphological operators and appear on the mask.
 
 #### DataAugmentation
 - input_folder : Input folder for the data augmentation. If not defined, the parameter out_folder in the section extraction is used.

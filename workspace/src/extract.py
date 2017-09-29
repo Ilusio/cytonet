@@ -105,7 +105,7 @@ def addBackground(imArray, maskArray):
     opening = opening.astype(np.uint8)
     return opening
 
-def extractPatches(output,filename,maskname, classes, level, patchSize,j):
+def extractPatches(output,filename,maskname, classes, level, patchSize,j, background):
     """
         Extract the patches for the given file and maskname
     """
@@ -122,8 +122,9 @@ def extractPatches(output,filename,maskname, classes, level, patchSize,j):
     
     #Preprocess
     maskArray_back = addBackground(imArray, maskArray)
+    extract_mask = maskArray_back if background else maskArray
     imArray = np.lib.pad(imArray, ((halfPatch, halfPatch), (halfPatch, halfPatch),(0,0)), 'reflect')
-    maskArrayPad = np.lib.pad(maskArray_back, ((halfPatch, halfPatch), (halfPatch, halfPatch)), 'reflect')
+    maskArrayPad = np.lib.pad(extract_mask, ((halfPatch, halfPatch), (halfPatch, halfPatch)), 'reflect')
     np.putmask(maskArrayPad, maskArrayPad==1, 255)
     # Extraction
     for key, tup in classes.items():
@@ -217,7 +218,8 @@ def extractFiles(files,
             maskPattern, 
             classes, 
             level, 
-            patchSize):
+            patchSize,
+            background):
     """
         Extract all the files of a folder
     """
@@ -236,5 +238,6 @@ def extractFiles(files,
                            new_classes,  
                            level, 
                            patchSize,
-                           j)
+                           j,
+                           background)
         print("Extraction for ", name, " finished")
