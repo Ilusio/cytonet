@@ -20,4 +20,4 @@ c.NotebookApp.port = 8888
 c.NotebookApp.open_browser = False
 c.MultiKernelManager.default_kernel_name = 'python2'
 c.NotebookApp.notebook_dir='/root/workspace/'
-c.NotebookApp.password=passwd('G70m3ru7u$!')
+c.NotebookApp.password=passwd('password')

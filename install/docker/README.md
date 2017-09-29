@@ -5,6 +5,7 @@ These dockerfiles are inspirated from https://github.com/floydhub/dl-docker/
 ## Prerequisites
 1. Install [Docker](https://docs.docker.com/engine/installation/)
 2. If you plan to use the GPU version, install the [drivers](https://www.nvidia.com/Download/index.aspx?lang=en-us) and [nvidia-docker](https://github.com/NVIDIA/nvidia-docker)
+3. Modify the password in the file jupyter_notebook_config.py
 
 ## Build the image
 
