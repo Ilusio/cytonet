@@ -74,9 +74,9 @@ def addBackground(imArray, maskArray):
     """
     im_in = cv2.cvtColor(imArray,cv2.COLOR_BGR2GRAY)
     # Threshold.
-    # Set values equal to or above 220 to 0.
-    # Set values below 220 to 255.
-    th, im_th = cv2.threshold(im_in, 220, 255, cv2.THRESH_BINARY_INV);
+    # Set values equal to or above 240 to 0.
+    # Set values below 240 to 255.
+    th, im_th = cv2.threshold(im_in, 240, 255, cv2.THRESH_BINARY_INV);
     # Copy the thresholded image.
     im_floodfill = im_th.copy()
     # Mask used to flood filling.
