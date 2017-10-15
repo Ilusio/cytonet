@@ -181,7 +181,7 @@ def evaluate(prediction, filename, output_folder,load_level, transparency, displ
     font = ImageFont.truetype("./font/Roboto-Medium.ttf", 40)
     draw.text((80, maskImage.size[1]-63),"False positive : " + str(FP),(0,0,0),font=font)
     draw.text((maskImage.size[0]/3 + 80, maskImage.size[1]-63),"True positive : " + str(TP),(0,0,0),font=font)
-    draw.text((maskImage.size[0]*2/3 + 80, maskImage.size[1]-63),"False positive : " + str(FN),(0,0,0),font=font)
+    draw.text((maskImage.size[0]*2/3 + 80, maskImage.size[1]-63),"False negative : " + str(FN),(0,0,0),font=font)
     draw.text((15, maskImage.size[1]-135),"F-score : " + str(round(Fscore, 5)),(0,0,0),font=font)
     draw.text((maskImage.size[0]/3 +15, maskImage.size[1]-135),"Recall : " + str(round(recall, 5)),(0,0,0),font=font)
     draw.text((maskImage.size[0]*2/3 +15, maskImage.size[1]-135),"Precision : " + str(round(precision, 5)),(0,0,0),font=font)
