@@ -29,6 +29,11 @@ The segmentation uses the trained network and gives a heatmap as an output.
 
 The evaluation uses the prediction from the segmentation and the original mask and computes the F1-score, the recall and precision and provide an images with the true positive, false positive and false negative. 
 
+#### Normalize masks (optional)
+
+Some data can have different values for the pixels of the same class. You can use this file in order to change the pixels and normalize them between all the files.
+
+
 ## Configuration
 
 The configuration file is named cytonet.cfg. Each step of the pipeline has a section in it plus a general one. You need to modify this file before launching any script.
@@ -88,6 +93,10 @@ The configuration file is named cytonet.cfg. Each step of the pipeline has a sec
 - transparency : Alpha channel value for the annoatation on the output images.
 - display : If true, the images will be shown in the notebook.
 - load_level : If not declared, the parameter load_level in the general section is used.
+
+#### Mask
+- masknames : Input files for the normalization. This must be an array of globs. Ex : ['/root/workspace/data/14_02/*.png', '/root/workspace/data/10_02/*.png']
+- values : Dictionary of the old value and the new one. Ex : {0:2,255:0}. This will change the 0 pixels to 2 and the 255 pixels to 0. If you put an empty dictionary (ie {}) all the pixels different to 0.
 
 ## Other information
 
